@@ -1,5 +1,3 @@
-package task2;
-
 import itb2.filter.AbstractFilter;
 import itb2.image.Image;
 import itb2.image.ImageFactory;

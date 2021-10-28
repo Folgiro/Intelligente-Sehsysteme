@@ -1,5 +1,3 @@
-package task2;
-
 public class Meanx3Filter extends ConvolutionFilter {
     @Override
     double[][] getKernel() {
