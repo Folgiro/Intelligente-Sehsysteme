@@ -38,8 +38,8 @@ public abstract class ConvolutionFilter extends AbstractFilter {
                 for (int offsetCol = -range; offsetCol < range +1; offsetCol++){
                     for (int offsetRow = -range; offsetRow < range +1; offsetRow++){
                         double value = 0;
-                        if(!(col + offsetCol < 0 || col + offsetCol >= width || row + offsetRow < 0 || row + offsetRow >= heigth)){
-                            value = grayImage.getValue(col + offsetCol, row + offsetRow)[0];
+                        if(!(col - offsetCol < 0 || col - offsetCol >= width || row - offsetRow < 0 || row - offsetRow >= heigth)){
+                            value = grayImage.getValue(col - offsetCol, row - offsetRow)[0];
                         }
                         sum += value * kernel[offsetCol + range][offsetRow + range];
                     }
