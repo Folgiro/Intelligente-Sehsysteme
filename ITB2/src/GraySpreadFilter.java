@@ -5,6 +5,10 @@ import itb2.image.ImageFactory;
 
 public class GraySpreadFilter extends AbstractFilter {
 
+    /**
+     *returns image values which have been distributed over the whole intensity spectrum
+     * variables c1 and c2 are determined dynamically to scale the intensities
+     */
     protected double[][] applySpread(double[][] values, double min, double max){
         int width = values.length;
         int height = values[0].length;
@@ -12,7 +16,7 @@ public class GraySpreadFilter extends AbstractFilter {
         double c2 = 255 / (max - min);
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
-                values[col][row] = (values[col][row]+c1)*c2;
+                values[col][row] = Math.round((values[col][row]+c1)*c2);
             }
         }
         return values;
@@ -29,6 +33,7 @@ public class GraySpreadFilter extends AbstractFilter {
         double max = min;
         double[][] values = new double[width][height];
 
+        //get min and max values
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 values[col][row] = grayImage.getValue(col, row, GrayscaleImage.GRAYSCALE);

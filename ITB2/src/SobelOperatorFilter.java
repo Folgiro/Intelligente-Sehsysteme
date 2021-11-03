@@ -11,10 +11,15 @@ public class SobelOperatorFilter extends AbstractFilter {
         this.properties.addOptionProperty(TYPE, "Betrag", "Betrag", "Orientierung", "Gewichtete Orientierung");
     }
 
+    /**
+     *returns values of the absolute gradient which have been distributed over the whole intensity spectrum
+     */
     protected double[][] calculateAbsoluteGradient(double[][] horizontal, double[][] vertical, int width, int height) {
         double[][] result = new double[width][height];
         double min = Math.sqrt(Math.pow(horizontal[0][0], 2) + Math.pow(vertical[0][0], 2));
         double max = min;
+
+        //calulate absolute gradient and min max
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 result[col][row] = Math.sqrt(Math.pow(horizontal[col][row], 2) + Math.pow(vertical[col][row], 2));
@@ -25,6 +30,9 @@ public class SobelOperatorFilter extends AbstractFilter {
         return new GraySpreadFilter().applySpread(result, min, max);
     }
 
+    /**
+     *returns angles of the gradient
+     */
     protected double[][] calculateGradientAngle(double[][] horizontal, double[][] vertical, int width, int height) {
         double[][] result = new double[width][height];
         for (int col = 0; col < width; col++) {

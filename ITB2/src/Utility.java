@@ -23,6 +23,7 @@ public class Utility {
 
     /**
      * Returns gray scale image
+     * @param  values gray scale values of an image
      */
     protected static Image doubleArrayToImage(double[][] values, Image output, int width, int height){
         for (int col = 0; col < width; col++) {

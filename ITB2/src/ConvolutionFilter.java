@@ -23,12 +23,16 @@ public abstract class ConvolutionFilter extends AbstractFilter {
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
 
+                //apply filter for every pixel
                 double[][] kernel = getKernel();
                 int range = kernel.length / 2;
                 double sum = 0;
                 for (int offsetCol = -range; offsetCol < range + 1; offsetCol++) {
                     for (int offsetRow = -range; offsetRow < range + 1; offsetRow++) {
+                        //default value for outside of the image
                         double value = 0;
+
+                        // only if indices are not beyond the edge getValue is valid
                         if (!(col - offsetCol < 0 || col - offsetCol >= width || row - offsetRow < 0 || row - offsetRow >= height)) {
                             value = grayImage.getValue(col - offsetCol, row - offsetRow, GrayscaleImage.GRAYSCALE);
                         }
