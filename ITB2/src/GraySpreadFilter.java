@@ -5,7 +5,7 @@ import itb2.image.ImageFactory;
 
 public class GraySpreadFilter extends AbstractFilter {
 
-    protected double[][] applySpread(double[][] values, double max, double min){
+    protected double[][] applySpread(double[][] values, double min, double max){
         int width = values.length;
         int height = values[0].length;
         double c1 = -min;

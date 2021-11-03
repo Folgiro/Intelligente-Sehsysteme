@@ -8,7 +8,7 @@ public class GammaFilter extends AbstractFilter {
     private static final String GAMMA = "gamma";
 
     public GammaFilter(){
-        this.properties.addDoubleProperty("gamma", 1);
+        this.properties.addDoubleProperty(GAMMA, 1);
     }
 
     private double calcGammaCorrection(double x, double gamma){
