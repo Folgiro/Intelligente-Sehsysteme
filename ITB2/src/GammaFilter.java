@@ -7,13 +7,13 @@ import static java.lang.Math.round;
 public class GammaFilter extends AbstractFilter {
     private static final String GAMMA = "gamma";
 
-    public GammaFilter(){
+    public GammaFilter() {
         this.properties.addDoubleProperty(GAMMA, 1);
     }
 
-    private double calcGammaCorrection(double x, double gamma){
+    private double calcGammaCorrection(double x, double gamma) {
 
-        x = round(256 * Math.pow(x/255, gamma));
+        x = round(256 * Math.pow(x / 255, gamma));
         return ((x == 256) ? 255 : x);
     }
 
@@ -22,12 +22,12 @@ public class GammaFilter extends AbstractFilter {
 
         Image output = ImageFactory.bytePrecision().gray(input.getSize());
         double gamma = properties.getDoubleProperty(GAMMA);
-        for (int col = 0; col < input.getWidth(); col++){
-            for (int row = 0; row < input.getHeight(); row++){
+        for (int col = 0; col < input.getWidth(); col++) {
+            for (int row = 0; row < input.getHeight(); row++) {
                 double sum = 0;
-                for(int chan = 0; chan < input.getChannelCount(); chan++)
+                for (int chan = 0; chan < input.getChannelCount(); chan++)
                     sum += input.getValue(col, row, chan);
-                output.setValue(col, row, calcGammaCorrection(sum/input.getChannelCount(), gamma));
+                output.setValue(col, row, calcGammaCorrection(sum / input.getChannelCount(), gamma));
             }
         }
         return output;

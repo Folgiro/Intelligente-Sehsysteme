@@ -12,7 +12,7 @@ public class SobelOperatorFilter extends AbstractFilter {
     }
 
     /**
-     *returns values of the absolute gradient which have been distributed over the whole intensity spectrum
+     * returns values of the absolute gradient which have been distributed over the whole intensity spectrum
      */
     protected double[][] calculateAbsoluteGradient(double[][] horizontal, double[][] vertical, int width, int height) {
         double[][] result = new double[width][height];
@@ -31,7 +31,7 @@ public class SobelOperatorFilter extends AbstractFilter {
     }
 
     /**
-     *returns angles of the gradient
+     * returns angles of the gradient
      */
     protected double[][] calculateGradientAngle(double[][] horizontal, double[][] vertical, int width, int height) {
         double[][] result = new double[width][height];

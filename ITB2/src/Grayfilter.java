@@ -13,31 +13,31 @@ import itb2.image.RgbImage;
  */
 @RequireImageType(RgbImage.class)
 public class Grayfilter extends AbstractFilter {
-	
-	public Grayfilter() {
-		// Als Konverter registrieren
-		ImageConverter.register(RgbImage.class, ImageFactory.bytePrecision().gray(), this);
-	}
-	
-	@Override
-	public Image filter(Image input) {
-		// Ausgabebild erstellen
-		GrayscaleImage output = ImageFactory.bytePrecision().gray(input.getSize());
-		
-		// Über Pixel iterieren
-		for(int col = 0; col < input.getWidth(); col++) {
-			for(int row = 0; row < input.getHeight(); row++) {
-				double sum = 0;
-				
-				// Kanäle aufsummieren
-				for(int chan = 0; chan < input.getChannelCount(); chan++)
-					sum += input.getValue(col, row, chan);
-				
-				// Mittelwert abspeichern
-				output.setValue(col, row, sum / input.getChannelCount());
-			}
-		}
-		
-		return output;
-	}
+
+    public Grayfilter() {
+        // Als Konverter registrieren
+        ImageConverter.register(RgbImage.class, ImageFactory.bytePrecision().gray(), this);
+    }
+
+    @Override
+    public Image filter(Image input) {
+        // Ausgabebild erstellen
+        GrayscaleImage output = ImageFactory.bytePrecision().gray(input.getSize());
+
+        // Über Pixel iterieren
+        for (int col = 0; col < input.getWidth(); col++) {
+            for (int row = 0; row < input.getHeight(); row++) {
+                double sum = 0;
+
+                // Kanäle aufsummieren
+                for (int chan = 0; chan < input.getChannelCount(); chan++)
+                    sum += input.getValue(col, row, chan);
+
+                // Mittelwert abspeichern
+                output.setValue(col, row, sum / input.getChannelCount());
+            }
+        }
+
+        return output;
+    }
 }
