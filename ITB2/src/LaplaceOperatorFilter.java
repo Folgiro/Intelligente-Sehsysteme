@@ -31,6 +31,7 @@ public class LaplaceOperatorFilter extends AbstractFilter {
     /**
      * creates image values from zero pass data
      * not displaced image is compared to each displaced image
+     * @param inputs contains displaced images. first image is without displacement
      */
     protected double[][] getZeroPasses(double[][][] inputs, int width, int height) {
         double[][] results = new double[width][height];
