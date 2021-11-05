@@ -3,10 +3,7 @@ import itb2.image.GrayscaleImage;
 import itb2.image.Image;
 import itb2.image.ImageFactory;
 
-// Ergebnisbild: Gradientenbeträge mit linearer Grauwertspreizung
-
-//TODO: - Skalierung bzgl. Gradientenbetrag
-//		- Orientierung so richtig?
+// Ergebnisbild: Gradientenbetraege mit linearer Grauwertspreizung
 
 public class SobelOperator extends AbstractFilter {
 	private static String OUT = "output image";
@@ -53,9 +50,9 @@ public class SobelOperator extends AbstractFilter {
 		double t = 0; //helper var
 		
 		// get I_minGiven and I_maxGiven
-		double i_minGiven = 255;
-		double i_maxGiven = 0;
-		double wert =0;
+		double i_minGiven = input.getValue(0, 0, GrayscaleImage.GRAYSCALE);
+		double i_maxGiven = input.getValue(0, 0, GrayscaleImage.GRAYSCALE);
+		double wert = 0;
 		for (int row=0; row<input.getHeight();row++) {
 			for (int col=0; col<input.getWidth(); col++) {
 				wert = input.getValue(col, row, GrayscaleImage.GRAYSCALE);
@@ -72,6 +69,7 @@ public class SobelOperator extends AbstractFilter {
 		for (int row=0; row<input.getHeight();row++) {
 			for (int col=0; col<input.getWidth(); col++) {
 				t = Math.round((input.getValue(col, row, GrayscaleImage.GRAYSCALE) - i_minGiven)*(255/(i_maxGiven-i_minGiven)));
+				
 				output.setValue(col, row, GrayscaleImage.GRAYSCALE, t);
 			}
 		}
@@ -97,7 +95,7 @@ public class SobelOperator extends AbstractFilter {
 			}
 		}
 		if (out == "Betraege"){
-			// berechne Gradientenbeträge
+			// berechne Gradientenbetraege
 			for (int row=1; row<input.getHeight()-1;row++) {
 				for (int col=1; col<input.getWidth()-1; col++) {
 					s=Math.sqrt(Math.pow(s_x.getValue(col, row, GrayscaleImage.GRAYSCALE),2)+Math.pow(s_y.getValue(col, row, GrayscaleImage.GRAYSCALE), 2));
@@ -123,7 +121,7 @@ public class SobelOperator extends AbstractFilter {
 					}
 					
 					// binning: ignoriert ob auf oder absteigend, absolute Orientierung aufgetragen
-					if(Math.abs(theta)<22.5) {
+					if(Math.abs(theta)<22.5 || Math.abs(theta)>=157.5) {
 						output.setValue(col, row, 0,0,255); //blau
 					}
 					else if(Math.abs(theta)<67.5) {
@@ -138,11 +136,12 @@ public class SobelOperator extends AbstractFilter {
 				}
 			}
 		}
-		else { //"Betraege + Orientierung" -> Helligkeit der Farbe der Orientierung <-> Betrag // TODO: Skalierung
+		else { //"Betraege + Orientierung" -> Helligkeit der Farbe der Orientierung <-> Betrag
 			for (int row=1; row<input.getHeight()-1;row++) {
 				for (int col=1; col<input.getWidth()-1; col++) {
 					// berechne Betrag
 					s=Math.sqrt(Math.pow(s_x.getValue(col, row, GrayscaleImage.GRAYSCALE),2)+Math.pow(s_y.getValue(col, row, GrayscaleImage.GRAYSCALE), 2));
+					
 					// berechne Orientierung
 					if(s_x.getValue(col, row, GrayscaleImage.GRAYSCALE)==0 && s_y.getValue(col, row, GrayscaleImage.GRAYSCALE) != 0) {
 						theta = 90;
@@ -155,17 +154,17 @@ public class SobelOperator extends AbstractFilter {
 					}
 					
 					// binning: ignoriert ob auf oder absteigend, absolute Orientierung aufgetragen
-					if(Math.abs(theta)<22.5) {
-						output.setValue(col, row, 0,0,255); //blau
+					if(Math.abs(theta)<22.5 || Math.abs(theta)>=157.5) {
+						output.setValue(col, row, 0,0,s); //blau
 					}
 					else if(Math.abs(theta)<67.5) {
-						output.setValue(col, row, 255,0,0); //rot
+						output.setValue(col, row, s,0,0); //rot
 					}
 					else if(Math.abs(theta)<112.5) {
-						output.setValue(col, row, 255,255,0); //gelb
+						output.setValue(col, row, s,s,0); //gelb
 					}
 					else if(Math.abs(theta)<157.5) {
-						output.setValue(col, row, 0,255,0); //gruen
+						output.setValue(col, row, 0,s,0); //gruen
 					}
 				}
 			}
