@@ -1,5 +1,4 @@
 import itb2.filter.AbstractFilter;
-import itb2.image.GrayscaleImage;
 import itb2.image.Image;
 import itb2.image.ImageFactory;
 
@@ -11,40 +10,43 @@ public class LaplaceOperatorFilter extends AbstractFilter {
     }
 
     /**
-     * displaces image
-     *
-     * @param output contains result
+     * displaces image according to displacement values
+     * @param displacement int array containing 2 values, which correspond to vertical and horizontal displacement
      */
-    protected void applyDisplacement(Image input, Image output, int[] displacement, int width, int height) {
+    protected double[][] applyDisplacement(double[][] input, int[] displacement, int width, int height) {
+        double[][] results = new double[width][height];
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 try {
-                    output.setValue(col, row, input.getValue(col + displacement[0], row + displacement[1], GrayscaleImage.GRAYSCALE));
+                    results[col][row] =  input[col + displacement[0]][row + displacement[1]];
                 } catch (Exception e) {
-                    output.setValue(col, row, 0);
+                    assert results[col] != null;
+                    results[col][row] = 0;
                 }
             }
         }
+        return results;
     }
 
     /**
-     * creates image from zero pass data
+     * creates image values from zero pass data
      * not displaced image is compared to each displaced image
-     *
-     * @param output contains result
      */
-    protected void getZeroPasses(Image[] inputs, Image output, int width, int height) {
+    protected double[][] getZeroPasses(double[][][] inputs, int width, int height) {
+        double[][] results = new double[width][height];
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 boolean zeroPass = false;
                 for (int i = 1; i < inputs.length; i++) {
-                    if (Math.signum(inputs[0].getValue(col, row, GrayscaleImage.GRAYSCALE)) != Math.signum(inputs[i].getValue(col, row, GrayscaleImage.GRAYSCALE))) {
+                    if (Math.signum(inputs[0][col][row]) != Math.signum(inputs[i][col][row])) {
                         zeroPass = true;
+                        break;
                     }
                 }
-                output.setValue(col, row, zeroPass ? 255 : 0);
+                results[col][row] =  zeroPass ? 255 : 0;
             }
         }
+        return results;
     }
 
     /**
@@ -54,13 +56,12 @@ public class LaplaceOperatorFilter extends AbstractFilter {
      * @param output contains result
      */
     private void applyOperator(Image input, Image output, int width, int height, ConvolutionFilter filter, int[][] displacements) {
-        Image[] results = new Image[displacements.length];
-        input = filter.filter(input);
-        for (int i = 0; i < displacements.length; i++) {
-            results[i] = ImageFactory.bytePrecision().gray(input.getSize());
-            applyDisplacement(input, results[i], displacements[i], width, height);
+        double[][][] results = new double[displacements.length][width][height];
+        results[0] = filter.applyConvolution(input);
+        for (int i = 1; i < displacements.length; i++) {
+            results[i] = applyDisplacement(results[0], displacements[i], width, height);
         }
-        getZeroPasses(results, output, width, height);
+        Utility.doubleArrayToImage(getZeroPasses(results, width, height), output, width, height);
     }
 
     @Override
@@ -68,8 +69,6 @@ public class LaplaceOperatorFilter extends AbstractFilter {
         Image output = ImageFactory.bytePrecision().gray(input.getSize());
         int width = input.getWidth();
         int height = input.getHeight();
-
-        double[][] result;
 
         String type = properties.getOptionProperty(TYPE);
         ConvolutionFilter filter = new Laplace4Filter();
