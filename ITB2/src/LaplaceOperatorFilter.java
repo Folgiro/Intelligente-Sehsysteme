@@ -76,12 +76,12 @@ public class LaplaceOperatorFilter extends AbstractFilter {
         //displace images and apply filter
         switch (type) {
             case "L4" -> {
-                int[][] displacements = new int[][]{{0, 0}, {-1, 0}, {0, -1}};
+                int[][] displacements = new int[][]{{0, 0}, {1, 0}, {0, 1}};
                 applyOperator(input, output, width, height, filter, displacements);
             }
             case "L8" -> {
                 filter = new Laplace8Filter();
-                int[][] displacements = new int[][]{{0, 0}, {-1, 0}, {0, -1}, {-1, -1}, {-1, 1}};
+                int[][] displacements = new int[][]{{0, 0}, {1, 0}, {0, 1}, {1, -1}, {1, 1}};
                 applyOperator(input, output, width, height, filter, displacements);
             }
         }
