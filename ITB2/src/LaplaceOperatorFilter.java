@@ -55,11 +55,10 @@ public class LaplaceOperatorFilter extends AbstractFilter {
      */
     private void applyOperator(Image input, Image output, int width, int height, ConvolutionFilter filter, int[][] displacements) {
         Image[] results = new Image[displacements.length];
-        Image result = ImageFactory.bytePrecision().gray(input.getSize());
+        input = filter.filter(input);
         for (int i = 0; i < displacements.length; i++) {
-            applyDisplacement(input, result, displacements[i], width, height);
-            results[i] = filter.filter(result);
-            result = ImageFactory.bytePrecision().gray(input.getSize());
+            results[i] = ImageFactory.bytePrecision().gray(input.getSize());
+            applyDisplacement(input, results[i], displacements[i], width, height);
         }
         getZeroPasses(results, output, width, height);
     }
