@@ -35,6 +35,8 @@ public class LaplaceOperatorFilter extends AbstractFilter {
      */
     protected double[][] getZeroPasses(double[][][] inputs, int width, int height) {
         double[][] results = new double[width][height];
+        double min = 0;
+        double max = 0;
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 boolean zeroPass = false;
@@ -44,10 +46,17 @@ public class LaplaceOperatorFilter extends AbstractFilter {
                         break;
                     }
                 }
-                results[col][row] =  zeroPass ? 255 : 0;
+                results[col][row] =  zeroPass ? inputs[0][col][row] : 0;
+                if(col ==0 && row == 0)
+                {
+                    min = results[col][row];
+                    max = min;
+                }
+                min = Math.min(min, results[col][row]);
+                max = Math.max(max, results[col][row]);
             }
         }
-        return results;
+        return new GraySpreadFilter().applySpread(results, min, max);
     }
 
     /**
