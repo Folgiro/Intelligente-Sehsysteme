@@ -2,22 +2,22 @@ import itb2.image.GrayscaleImage
 import itb2.image.Image
 
 object Utility {
-//    /**
-//     * Returns double array of values
-//     * Converts RGB Images to gray scale
-//     */
-//    internal fun imageToDoubleArray(input: Image?): Array<DoubleArray> {
-//        val grayImage = Grayfilter().filter(input)
-//        val width = grayImage.width
-//        val height = grayImage.height
-//        val results = Array(width) { DoubleArray(height) }
-//        for (col in 0 until width) {
-//            for (row in 0 until height) {
-//                results[col][row] = grayImage.getValue(col, row, GrayscaleImage.GRAYSCALE)
-//            }
-//        }
-//        return results
-//    }
+    /**
+     * Returns double array of values
+     * Converts RGB Images to gray scale
+     */
+    internal fun imageToDoubleArray(input: Image): Array<DoubleArray> {
+        val grayImage = Grayfilter().filter(input)
+        val width = grayImage.width
+        val height = grayImage.height
+        val results = Array(width) { DoubleArray(height) }
+        for (col in 0 until width) {
+            for (row in 0 until height) {
+                results[col][row] = grayImage.getValue(col, row, GrayscaleImage.GRAYSCALE)
+            }
+        }
+        return results
+    }
 
     /**
      * Returns gray scale image
@@ -47,7 +47,7 @@ object Utility {
                 var color = DoubleArray(3)
                 val value = values[col][row]
                 val intensity = absoluteGradient[col][row]
-                if (value > 157.5 && value <= 180 || value >= 0 && value <= 22.5) {
+                if (value > 157.5 && value <= 180 || value in 0.0..22.5) {
                     color = doubleArrayOf(0.0, 0.0, intensity)
                 }
                 if (value > 22.5 && value <= 67.5) {
