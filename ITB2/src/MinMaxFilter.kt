@@ -4,10 +4,10 @@ import itb2.image.Image
 import itb2.image.ImageFactory
 import kotlin.math.floor
 
-class MedianFilter : AbstractFilter() {
+class MinMaxFilter : AbstractFilter() {
 
     /**
-     * replaces pixel value with median of environment
+     *
      * Converts image to gray scale
      */
     override fun filter(input: Image): Image {
@@ -15,33 +15,33 @@ class MedianFilter : AbstractFilter() {
         val output: Image = ImageFactory.bytePrecision().gray(input.size)
         val width = grayImage.width
         val height = grayImage.height
-        val type = properties.getIntegerProperty(SIZE)
+        val type = properties.getOptionProperty<String>(TYPE)
         for (col in 0 until width) {
             for (row in 0 until height) {
-                val range = type/2
+                val range = 1
                 val environment = mutableListOf<Double>()
                 for (offsetCol in -range until range + 1) {
-                    for (offsetRow in -range until range + 1) {
+                    for (offsetRow in if(offsetCol == 0) 0 until 0 else -range until range + 1) {
 
                         // only if indices are not beyond the edge getValue is valid
                         if (!(col - offsetCol < 0 || col - offsetCol >= width || row - offsetRow < 0 || row - offsetRow >= height)) {
-                            environment.add(grayImage.getValue(col - offsetCol, row - offsetRow, GrayscaleImage.GRAYSCALE))
+                            val dif = if(type == "Max") 1 else -1
+                            environment.add(grayImage.getValue(col + offsetCol, row + offsetRow, GrayscaleImage.GRAYSCALE) + dif)
                         }
                     }
                 }
-                environment.sort()
-                output.setValue(col, row, environment[environment.size/2])
+                output.setValue(col, row, if(type == "Max") environment.maxOrNull() ?: 0.0 else environment.minOrNull() ?: 0.0)
             }
         }
         return output
     }
 
     companion object {
-        private const val SIZE = "size"
+        private const val TYPE = "type"
     }
 
     init {
-        properties.addIntegerProperty(SIZE, 3)
+        properties.addOptionProperty(TYPE, "Max", "Max", "Min")
     }
 
 }
