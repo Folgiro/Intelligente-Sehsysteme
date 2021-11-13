@@ -7,7 +7,7 @@ import kotlin.math.floor
 class MinMaxFilter : AbstractFilter() {
 
     /**
-     *
+     * Replaces values with min / max value of cross shaped environment
      * Converts image to gray scale
      */
     override fun filter(input: Image): Image {
