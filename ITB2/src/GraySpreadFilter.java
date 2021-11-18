@@ -5,18 +5,35 @@ import itb2.image.ImageFactory;
 
 public class GraySpreadFilter extends AbstractFilter {
 
+    private static final String THRESHOLD = "threshold";
+
+    public GraySpreadFilter() {
+        this.properties.addIntegerProperty(THRESHOLD, 0);
+    }
+
     /**
      * returns image values which have been distributed over the whole intensity spectrum
      * variables c1 and c2 are determined dynamically to scale the intensities
      */
     protected double[][] applySpread(double[][] values, double min, double max) {
+        return applySpread(values, min, max, 0);
+    }
+
+    /**
+     * returns image values which have been distributed over the whole intensity spectrum
+     * variables c1 and c2 are determined dynamically to scale the intensities
+     * @param threshold only values grater then threshold are changed
+     */
+    protected double[][] applySpread(double[][] values, double min, double max, int threshold) {
         int width = values.length;
         int height = values[0].length;
         double c1 = -min;
-        double c2 = 255 / (max - min);
+        double c2 = (255) / (max - min);
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
-                values[col][row] = Math.round((values[col][row] + c1) * c2);
+                if(threshold < values[col][row]){
+                    values[col][row] = Math.round((values[col][row] + c1) * c2);
+                }
             }
         }
         return values;
@@ -32,17 +49,20 @@ public class GraySpreadFilter extends AbstractFilter {
         double min = grayImage.getValue(0, 0, GrayscaleImage.GRAYSCALE);
         double max = min;
         double[][] values = new double[width][height];
+        int threshold = this.properties.getIntegerProperty(THRESHOLD);
 
         //get min and max values
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 values[col][row] = grayImage.getValue(col, row, GrayscaleImage.GRAYSCALE);
-                min = Math.min(min, values[col][row]);
-                max = Math.max(max, values[col][row]);
+                if(threshold < values[col][row]){
+                    min = Math.min(min, values[col][row]);
+                    max = Math.max(max, values[col][row]);
+                }
             }
         }
 
-        values = applySpread(values, min, max);
+        values = applySpread(values, min, max, threshold);
 
         return Utility.doubleArrayToImage(values, output, width, height);
     }
