@@ -27,12 +27,12 @@ public class BinarySegmentationFilter extends AbstractFilter {
         }
         Arrays.sort(thresholds);
 
-        final double[][] colors = new double[][]{{0, 100, 0}, {0, 0, 139}, {176, 48, 96}, {255, 0, 0}, {255, 255, 0}, {222, 184, 135}, {0, 255, 0}, {0, 255, 255}, {255, 0, 255}};
+        final double[][] colors = new double[][]{{0, 100, 0}, {0, 0, 139}, {176, 48, 96}, {255, 0, 0}, {255, 255, 0}, {222, 184, 135}, {0, 255, 0}, {0, 0, 0}, {255, 255, 255}};
 
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 //initializes with default color. will only be used if there are 9 thresholds and values beyond the last threshold
-                double[] color = new double[]{100, 149, 237};
+                double[] color = new double[]{255, 255, 255};
                 double value = input.getValue(col, row, 0);
                 for (int i = 0; i < thresholds.length - 1; i++) {
                     if (value >= thresholds[i] && value < thresholds[i + 1]) {
