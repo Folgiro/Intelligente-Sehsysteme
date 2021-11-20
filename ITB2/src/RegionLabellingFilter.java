@@ -19,7 +19,6 @@ public class RegionLabellingFilter extends AbstractFilter {
 
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
-                //initializes with default color. will only be used if there are 9 thresholds and values beyond the last threshold
 
                 double value = input.getValue(col, row, 0);
                 if (value == 0) {
