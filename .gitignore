@@ -9,3 +9,5 @@ ITB2/lib/
 ITB2/out/production/ITB2/META-INF/ITB2.kotlin_module
 .idea/
 >>>>>>> Stashed changes
+*.bin
+*.iml
