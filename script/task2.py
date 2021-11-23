@@ -33,7 +33,7 @@ def otsu(arr):
     """create first column result[0] = f result[1] = g"""
     result = [[0, 0, 1, 0, np.mean(arr), 0]]
     for T in range(1, max(arr)+1):
-        nT = np.count_nonzero(arr == T)/len(arr)
+        nT = np.count_nonzero(arr == T-1)/len(arr)
         nB = result[T-1][1] + nT
         nO = result[T-1][2] - nT
         muB = (result[T-1][3] * result[T-1][1] + nT*T)/nB if nB != 0 else 0
