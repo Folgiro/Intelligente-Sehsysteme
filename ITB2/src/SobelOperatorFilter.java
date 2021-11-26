@@ -11,6 +11,10 @@ public class SobelOperatorFilter extends AbstractFilter {
         this.properties.addOptionProperty(TYPE, "Betrag", "Betrag", "Orientierung", "Gewichtete Orientierung");
     }
 
+    public SobelOperatorFilter(String type) {
+        this.properties.addOptionProperty(TYPE, type, "Betrag", "Orientierung", "Gewichtete Orientierung");
+    }
+
     /**
      * returns values of the absolute gradient which have been distributed over the whole intensity spectrum
      */
