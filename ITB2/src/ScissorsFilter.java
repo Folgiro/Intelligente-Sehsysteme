@@ -42,16 +42,22 @@ public class ScissorsFilter extends AbstractFilter {
 
 
     protected ArrayList<Integer> executeDijkstra(ArrayList<Vertex> graph, final int start, final int end, int heigth) {
+        // initialize path costs
+        double max_cost = 0;
+        for(Vertex v : graph){
+            max_cost += v.getCost() + 1;
+        }
         double[] pathCosts = new double[graph.size()];
-        Arrays.fill(pathCosts, Double.POSITIVE_INFINITY);
+        Arrays.fill(pathCosts, max_cost);
         pathCosts[start] = graph.get(start).getCost();
 
+        //disjkstra
         ArrayList<Integer> activeNodes = new ArrayList<>(1);
         activeNodes.add(start);
 
         int min = -1;
         while (min != end) {
-            min = selectDeleteMin(activeNodes);
+            min = selectDeleteMinCost(activeNodes, graph);
             Vertex vMin = graph.get(min);
 
             for (int v : vMin.getAdjacencyArray()) {
@@ -73,8 +79,7 @@ public class ScissorsFilter extends AbstractFilter {
             int prevNode = -1;
             ArrayList<Integer> pathNodes = new ArrayList<>(1);
             for (int v : vK.getAdjacencyArray()) {
-                if (!isIn(visitedNodes, v) && pathCosts[v] + graph.get(k).getCost() == pathCosts[k] ) {
-                    pathCosts[v] = pathCosts[min] + graph.get(v).getCost();
+                if ((!isIn(visitedNodes, v)) && pathCosts[v] + graph.get(k).getCost() == pathCosts[k] ) {
                     prevNode = v;
                     visitedNodes.add(prevNode);
                     pathNodes.add(prevNode);
@@ -105,12 +110,14 @@ public class ScissorsFilter extends AbstractFilter {
         return nodeList;
     }
 
-    private int selectDeleteMin(ArrayList<Integer> list) {
+    private int selectDeleteMinCost(ArrayList<Integer> list, ArrayList<Vertex> graph) {
+        double cMin = graph.get(list.get(0)).getCost();
         int min = list.get(0);
         int index = 0;
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i) < min) {
+            if (graph.get(list.get(i)).getCost() < cMin) {
                 min = list.get(i);
+                cMin = graph.get(list.get(i)).getCost();
                 index = i;
             }
         }
@@ -141,8 +148,7 @@ public class ScissorsFilter extends AbstractFilter {
     @Override
     public Image filter(Image input) {
         Image grayImage = new Grayfilter().filter(input);
-        Image output = ImageFactory.getPrecision(input).rgb(input.getSize());
-        output = new CopyImageFilter_KB().filter(input);
+        Image output = new CopyImageFilter_KB().filter(input);
         int width = input.getWidth();
         int height = input.getHeight();
 
@@ -191,14 +197,26 @@ public class ScissorsFilter extends AbstractFilter {
         for (int i = 0; i < path.size(); i++) {
             imagePath[i][0] = path.get(i) / height;
             imagePath[i][1] = path.get(i) % height;
-            //set pixel of path to black
+            //set pixel of path to green
             output.setValue(imagePath[i][0], imagePath[i][1], 0,255,0);
         }
         System.out.println(path.size());
-        output.setValue(imagePath[0][0], imagePath[0][1], 0,0,255);
-        output.setValue(imagePath[imagePath.length-1][0], imagePath[imagePath.length-1][1], 0,0,255);
-        output.setValue(start[0], start[1], 255,0,0);
-        output.setValue(end[0], end[1], 255,0,0);
+        output.setValue(imagePath[0][0], imagePath[0][1], 255,0,0);
+        output.setValue(imagePath[imagePath.length-1][0], imagePath[imagePath.length-1][1], 255,0,0);
         return output;
+
+
+//        // TEST
+//        output = ImageFactory.bytePrecision().gray(input.getSize());
+//        double min = graph.get(0).getCost();
+//        double max = min;
+//        double[][] result = new double[width][height];
+//        for (int i = 0; i < graph.size(); i++) {
+//            result[i / height][ i % height] = graph.get(i).getCost();
+//            min = Math.min(min, result[i / height][i % height]);
+//            max = Math.max(max, result[i / height][i % height]);
+//        }
+//
+//        return Utility.doubleArrayToImage(new GraySpreadFilter().applySpread(result, min, max), output, width, height);
     }
 }
