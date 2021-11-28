@@ -76,7 +76,7 @@ public class ScissorsFilter extends AbstractFilter {
         int k = end;
         while (k != start) {
             Vertex vK = graph.get(k);
-            int prevNode = -1;
+            int prevNode;
             ArrayList<Integer> pathNodes = new ArrayList<>(1);
             for (int v : vK.getAdjacencyArray()) {
                 if ((!isIn(visitedNodes, v)) && pathCosts[v] + graph.get(k).getCost() == pathCosts[k] ) {
@@ -84,12 +84,6 @@ public class ScissorsFilter extends AbstractFilter {
                     visitedNodes.add(prevNode);
                     pathNodes.add(prevNode);
                 }
-            }
-            // abort if all neighbors were already visited
-            if(prevNode == -1)
-            {
-                System.out.println("Error -1");
-                return nodeList;
             }
 
             //choose node with lowest euclidian distance to start
@@ -186,23 +180,32 @@ public class ScissorsFilter extends AbstractFilter {
         double[][] vertical = new SobelFilterVertical().applyConvolution(input);
         double[][] absValues = new SobelOperatorFilter().calculateAbsoluteGradient(horizontal, vertical, width, height);
 
-        // start and end arrays first value is column, second is row
-        int[] start = new int[]{(int)points.get(0).getX(), (int)points.get(0).getY()};
-        int[] end = new int[]{(int)points.get(1).getX(), (int)points.get(1).getY()};
-        ArrayList<Vertex> graph = createGraph(absValues, start, end, width, height);
-        ArrayList<Integer> path = executeDijkstra(graph, start[0] * height + start[1], end[0] * height + end[1], height);
+        for(int i = 0; i < points.size(); i++) {
+            System.out.println("Durchgang " + i + " von " + points.size());
+            // start and end arrays first value is column, second is row
+            int[] start;
+            int[] end;
+            if(i == points.size()-1){
+                start = new int[]{(int) points.get(i).getX(), (int) points.get(i).getY()};
+                end = new int[]{(int) points.get(0).getX(), (int) points.get(0).getY()};
+            }else {
+                start = new int[]{(int) points.get(i).getX(), (int) points.get(i).getY()};
+                end = new int[]{(int) points.get(i + 1).getX(), (int) points.get(i + 1).getY()};
+            }
+            ArrayList<Vertex> graph = createGraph(absValues, start, end, width, height);
+            ArrayList<Integer> path = executeDijkstra(graph, start[0] * height + start[1], end[0] * height + end[1], height);
 
-        //convert adjacency Matrix indices to image indices
-        int[][] imagePath = new int[path.size()][2];
-        for (int i = 0; i < path.size(); i++) {
-            imagePath[i][0] = path.get(i) / height;
-            imagePath[i][1] = path.get(i) % height;
-            //set pixel of path to green
-            output.setValue(imagePath[i][0], imagePath[i][1], 0,255,0);
+            //convert adjacency Matrix indices to image indices
+            int[][] imagePath = new int[path.size()][2];
+            for (int j = 0; j < path.size(); j++) {
+                imagePath[j][0] = path.get(j) / height;
+                imagePath[j][1] = path.get(j) % height;
+                //set pixel of path to green
+                output.setValue(imagePath[j][0], imagePath[j][1], 0, 255, 0);
+            }
+            output.setValue(imagePath[0][0], imagePath[0][1], 255, 0, 0);
+            output.setValue(imagePath[imagePath.length - 1][0], imagePath[imagePath.length - 1][1], 255, 0, 0);
         }
-        System.out.println(path.size());
-        output.setValue(imagePath[0][0], imagePath[0][1], 255,0,0);
-        output.setValue(imagePath[imagePath.length-1][0], imagePath[imagePath.length-1][1], 255,0,0);
         return output;
 
 
