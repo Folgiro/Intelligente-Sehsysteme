@@ -10,43 +10,107 @@ public abstract class ConvolutionFilter extends AbstractFilter {
     //Has to be square
     abstract double[][] getKernel();
 
-    @Override
-    public Image filter(Image input) {
-        Image grayImage = ImageFactory.bytePrecision().gray(input.getSize());
-        Image output = ImageFactory.bytePrecision().gray(input.getSize());
-
-        for (int col = 0; col < input.getWidth(); col++) {
-            for (int row = 0; row < input.getHeight(); row++) {
-                // convert rgb value to grey
-                double sum = 0;
-                for (int chan = 0; chan < input.getChannelCount(); chan++)
-                    sum += input.getValue(col, row, chan);
-                grayImage.setValue(col, row, sum / input.getChannelCount());
-            }
-        }
-
-
+    /**
+     * Returns double array of convolution results
+     * Turns RGB Images into gray scale
+     */
+    protected double[][] applyConvolution(Image input) {
+        Image grayImage = new Grayfilter().filter(input);
         int width = grayImage.getWidth();
-        int heigth = grayImage.getHeight();
-        for (int col = 0; col < width; col++){
-            for (int row = 0; row < heigth; row++){
+        int height = grayImage.getHeight();
+        double[][] result = new double[height][width];
 
-                double result = 0;
+        for (int col = 0; col < width; col++) {
+            for (int row = 0; row < height; row++) {
+
+                //apply filter for every pixel
                 double[][] kernel = getKernel();
-                int range = kernel.length/2;
+                int range = kernel.length / 2;
                 double sum = 0;
-                for (int offsetCol = -range; offsetCol < range +1; offsetCol++){
-                    for (int offsetRow = -range; offsetRow < range +1; offsetRow++){
+                for (int offsetCol = -range; offsetCol < range + 1; offsetCol++) {
+                    for (int offsetRow = -range; offsetRow < range + 1; offsetRow++) {
+                        //default value for outside of the image
                         double value = 0;
-                        if(!(col - offsetCol < 0 || col - offsetCol >= width || row - offsetRow < 0 || row - offsetRow >= heigth)){
-                            value = grayImage.getValue(col - offsetCol, row - offsetRow)[0];
+
+                        // only if indices are not beyond the edge getValue is valid
+                        if (!(col - offsetCol < 0 || col - offsetCol >= width || row - offsetRow < 0 || row - offsetRow >= height)) {
+                            value = grayImage.getValue(col - offsetCol, row - offsetRow, GrayscaleImage.GRAYSCALE);
                         }
-                        sum += value * kernel[offsetCol + range][offsetRow + range];
+                        sum += value * kernel[offsetRow + range][offsetCol + range];
                     }
                 }
-                output.setValue(col, row, sum);
+                result[row][col] = sum;
             }
         }
-        return output;
+        return result;
+    }
+
+    @Override
+    public Image filter(Image input) {
+        Image output = ImageFactory.bytePrecision().gray(input.getSize());
+        double[][] values = applyConvolution(input);
+
+        int width = input.getWidth();
+        int height = input.getHeight();
+        return Utility.doubleArrayToImage(values, output, width, height);
     }
 }
+
+/*
+//  nicht fertig -> siehe github für Christians Lösung
+import itb2.filter.AbstractFilter;
+import itb2.image.Image;
+import itb2.image.ImageFactory;
+import itb2.image.GrayscaleImage;
+
+abstract class ConvolutionFilter extends AbstractFilter{
+	//in allen Unterklassen soll hier Kernel eingegeben werden
+	// muss quadratisch sein und ungerade Länge haben
+	abstract double[][] getKernel();
+	
+	public double convolution_sum(double[][] image, double[][] kernel) {
+		double sum = 0;
+		for(int row=0; row<kernel.length;row++) {
+			for(int col=0; row<kernel.length;col++) {
+				sum+=image[row][col]*kernel[row][col];
+			}
+		}
+		return sum;
+	}
+	
+	public double[][] getSubimage(int col, int row, int dim, Image image){
+		double[][] subimage = new double[0][0];
+		
+		for(int i= -dim; i<dim; i++) {
+			for(int j=-dim; j<dim;j++) {
+				subimage[i+dim][j+dim]=image.getValue(col+j, row+i, 0);
+			}
+		}
+		return subimage;
+	}
+	
+	//filter-methode: wende Konvolutionsmaske auf Grauwertbild an
+	public GrayscaleImage filter(Image input) {
+		GrayscaleImage output = ImageFactory.bytePrecision().gray(input.getSize());
+		double kernel[][] = getKernel();
+		int width_kernel = (kernel.length-1)/2;
+		double[][] subimage; 
+		double sum = 0;
+		// behandele Randpixel
+		// obersten Reihen
+		for (int row=0;row<width_kernel;row++) {
+			for(int col=width_kernel; col< input.getWidth()-width_kernel;col++) {
+				
+			}
+		}
+		//behandele Mittelpixel
+		for(int col=width_kernel; col< input.getWidth()-width_kernel;col++) {
+			for(int row=width_kernel; row<input.getHeight()-width_kernel; row++) {
+				subimage = getSubimage(row, col, width_kernel, input);
+				output.setValue(col, row, convolution_sum( subimage, kernel) );
+			}
+		}
+		return output;
+	}
+}
+*/
