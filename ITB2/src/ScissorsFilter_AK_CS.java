@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class ScissorsFilter extends AbstractFilter {
+public class ScissorsFilter_AK_CS extends AbstractFilter {
 
     /**
      * creates adjacency matrix which is stored in form of a List of Vertices.
@@ -20,8 +20,8 @@ public class ScissorsFilter extends AbstractFilter {
      * @param end       coordinates of end pixel
      * @return List of Vertices
      */
-    protected ArrayList<Vertex> createGraph(double[][] absValues, int[] start, int[] end, int width, int height) {
-        ArrayList<Vertex> result = new ArrayList<>(width * height);
+    protected ArrayList<Vertex_AK_CS> createGraph(double[][] absValues, int[] start, int[] end, int width, int height) {
+        ArrayList<Vertex_AK_CS> result = new ArrayList<>(width * height);
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 // Find indices of neighbors in the graph
@@ -34,17 +34,17 @@ public class ScissorsFilter extends AbstractFilter {
                         neighbors.add(height * col + (row + offset));
                     }
                 }
-                result.add(new Vertex(listToArray(neighbors), Math.abs(absValues[col][row] - (absValues[start[0]][start[1]] + absValues[end[0]][end[1]]))));
+                result.add(new Vertex_AK_CS(listToArray(neighbors), Math.abs(absValues[col][row] - (absValues[start[0]][start[1]] + absValues[end[0]][end[1]])/2)));
             }
         }
         return result;
     }
 
 
-    protected ArrayList<Integer> executeDijkstra(ArrayList<Vertex> graph, final int start, final int end, int heigth) {
+    protected ArrayList<Integer> executeDijkstra(ArrayList<Vertex_AK_CS> graph, final int start, final int end, int heigth) {
         // initialize path costs
         double max_cost = 0;
-        for(Vertex v : graph){
+        for(Vertex_AK_CS v : graph){
             max_cost += v.getCost() + 1;
         }
         double[] pathCosts = new double[graph.size()];
@@ -58,7 +58,7 @@ public class ScissorsFilter extends AbstractFilter {
         int min = -1;
         while (min != end) {
             min = selectDeleteMinCost(activeNodes, graph);
-            Vertex vMin = graph.get(min);
+            Vertex_AK_CS vMin = graph.get(min);
 
             for (int v : vMin.getAdjacencyArray()) {
                 if (pathCosts[min] + graph.get(v).getCost() < pathCosts[v]) {
@@ -75,7 +75,7 @@ public class ScissorsFilter extends AbstractFilter {
         nodeList.add(end);
         int k = end;
         while (k != start) {
-            Vertex vK = graph.get(k);
+            Vertex_AK_CS vK = graph.get(k);
             int prevNode;
             ArrayList<Integer> pathNodes = new ArrayList<>(1);
             for (int v : vK.getAdjacencyArray()) {
@@ -104,7 +104,7 @@ public class ScissorsFilter extends AbstractFilter {
         return nodeList;
     }
 
-    private int selectDeleteMinCost(ArrayList<Integer> list, ArrayList<Vertex> graph) {
+    private int selectDeleteMinCost(ArrayList<Integer> list, ArrayList<Vertex_AK_CS> graph) {
         double cMin = graph.get(list.get(0)).getCost();
         int min = list.get(0);
         int index = 0;
@@ -141,8 +141,8 @@ public class ScissorsFilter extends AbstractFilter {
 
     @Override
     public Image filter(Image input) {
-        Image grayImage = new Grayfilter().filter(input);
-        Image output = new CopyImageFilter_KB().filter(input);
+        Image grayImage = new Grayfilter_AK_CS().filter(input);
+        Image output = new CopyImageFilter_AK_CS().filter(input);
         int width = input.getWidth();
         int height = input.getHeight();
 
@@ -176,9 +176,9 @@ public class ScissorsFilter extends AbstractFilter {
         } while(selections.size() > 0);
 
 
-        double[][] horizontal = new SobelFilterHorizontal().applyConvolution(input);
-        double[][] vertical = new SobelFilterVertical().applyConvolution(input);
-        double[][] absValues = new SobelOperatorFilter().calculateAbsoluteGradient(horizontal, vertical, width, height);
+        double[][] horizontal = new SobelFilterHorizontal_AK_CS().applyConvolution(input);
+        double[][] vertical = new SobelFilterVertical_AK_CS().applyConvolution(input);
+        double[][] absValues = new SobelOperatorFilter_AK_CS().calculateAbsoluteGradient(horizontal, vertical, width, height);
 
         for(int i = 0; i < points.size(); i++) {
             System.out.println("Durchgang " + i + " von " + points.size());
@@ -192,7 +192,7 @@ public class ScissorsFilter extends AbstractFilter {
                 start = new int[]{(int) points.get(i).getX(), (int) points.get(i).getY()};
                 end = new int[]{(int) points.get(i + 1).getX(), (int) points.get(i + 1).getY()};
             }
-            ArrayList<Vertex> graph = createGraph(absValues, start, end, width, height);
+            ArrayList<Vertex_AK_CS> graph = createGraph(absValues, start, end, width, height);
             ArrayList<Integer> path = executeDijkstra(graph, start[0] * height + start[1], end[0] * height + end[1], height);
 
             //convert adjacency Matrix indices to image indices
@@ -207,19 +207,5 @@ public class ScissorsFilter extends AbstractFilter {
             output.setValue(imagePath[imagePath.length - 1][0], imagePath[imagePath.length - 1][1], 255, 0, 0);
         }
         return output;
-
-
-//        // TEST
-//        output = ImageFactory.bytePrecision().gray(input.getSize());
-//        double min = graph.get(0).getCost();
-//        double max = min;
-//        double[][] result = new double[width][height];
-//        for (int i = 0; i < graph.size(); i++) {
-//            result[i / height][ i % height] = graph.get(i).getCost();
-//            min = Math.min(min, result[i / height][i % height]);
-//            max = Math.max(max, result[i / height][i % height]);
-//        }
-//
-//        return Utility.doubleArrayToImage(new GraySpreadFilter().applySpread(result, min, max), output, width, height);
     }
 }

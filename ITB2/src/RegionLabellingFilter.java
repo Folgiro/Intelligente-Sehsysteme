@@ -10,7 +10,7 @@ public class RegionLabellingFilter extends AbstractFilter {
     @Override
     public Image filter(Image input) {
         Image output = ImageFactory.bytePrecision().rgb(input.getSize());
-        input = new Grayfilter().filter(input);
+        input = new Grayfilter_AK_CS().filter(input);
         int width = input.getWidth();
         int height = input.getHeight();
         int[][] labels = new int[width][height];

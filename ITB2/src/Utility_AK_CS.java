@@ -1,14 +1,14 @@
 import itb2.image.GrayscaleImage;
 import itb2.image.Image;
 
-public class Utility {
+public class Utility_AK_CS {
 
     /**
      * Returns double array of values
      * Converts RGB Images to gray scale
      */
     protected static double[][] imageToDoubleArray(Image input) {
-        Image grayImage = new Grayfilter().filter(input);
+        Image grayImage = new Grayfilter_AK_CS().filter(input);
         int width = grayImage.getWidth();
         int height = grayImage.getHeight();
         double[][] results = new double[width][height];

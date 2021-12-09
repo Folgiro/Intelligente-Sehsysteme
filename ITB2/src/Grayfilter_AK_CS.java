@@ -12,9 +12,9 @@ import itb2.image.RgbImage;
  * @author Micha Strauch
  */
 @RequireImageType(RgbImage.class)
-public class Grayfilter extends AbstractFilter {
+public class Grayfilter_AK_CS extends AbstractFilter {
 
-    public Grayfilter() {
+    public Grayfilter_AK_CS() {
         // Als Konverter registrieren
         ImageConverter.register(RgbImage.class, ImageFactory.bytePrecision().gray(), this);
     }

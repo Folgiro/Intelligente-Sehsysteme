@@ -1,4 +1,4 @@
-public class Meanx5Filter extends ConvolutionFilter {
+public class Meanx5Filter extends ConvolutionFilter_AK_CS {
     @Override
     double[][] getKernel() {
         double[][] arr = new double[5][5];

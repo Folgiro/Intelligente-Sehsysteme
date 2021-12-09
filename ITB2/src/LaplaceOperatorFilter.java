@@ -56,7 +56,7 @@ public class LaplaceOperatorFilter extends AbstractFilter {
                 max = Math.max(max, results[col][row]);
             }
         }
-        return new GraySpreadFilter().applySpread(results, min, max);
+        return new GraySpreadFilter_AK_CS().applySpread(results, min, max);
     }
 
     /**
@@ -65,13 +65,13 @@ public class LaplaceOperatorFilter extends AbstractFilter {
      *
      * @param output contains result
      */
-    private void applyOperator(Image input, Image output, int width, int height, ConvolutionFilter filter, int[][] displacements) {
+    private void applyOperator(Image input, Image output, int width, int height, ConvolutionFilter_AK_CS filter, int[][] displacements) {
         double[][][] results = new double[displacements.length][width][height];
         results[0] = filter.applyConvolution(input);
         for (int i = 1; i < displacements.length; i++) {
             results[i] = applyDisplacement(results[0], displacements[i], width, height);
         }
-        Utility.doubleArrayToImage(getZeroPasses(results, width, height), output, width, height);
+        Utility_AK_CS.doubleArrayToImage(getZeroPasses(results, width, height), output, width, height);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class LaplaceOperatorFilter extends AbstractFilter {
         int height = input.getHeight();
 
         String type = properties.getOptionProperty(TYPE);
-        ConvolutionFilter filter = new Laplace4Filter();
+        ConvolutionFilter_AK_CS filter = new Laplace4Filter();
 
         //displace images and apply filter
         switch (type) {

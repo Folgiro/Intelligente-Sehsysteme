@@ -2,7 +2,7 @@ import itb2.filter.AbstractFilter;
 import itb2.image.Image;
 import itb2.image.ImageFactory;
 
-public class CopyImageFilter_KB extends AbstractFilter {
+public class CopyImageFilter_AK_CS extends AbstractFilter {
     @Override
     public Image filter(Image input) {
         Image output = ImageFactory.getPrecision(input).rgb(input.getSize());

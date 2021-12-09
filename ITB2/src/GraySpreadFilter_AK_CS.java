@@ -3,11 +3,11 @@ import itb2.image.GrayscaleImage;
 import itb2.image.Image;
 import itb2.image.ImageFactory;
 
-public class GraySpreadFilter extends AbstractFilter {
+public class GraySpreadFilter_AK_CS extends AbstractFilter {
 
     private static final String THRESHOLD = "threshold";
 
-    public GraySpreadFilter() {
+    public GraySpreadFilter_AK_CS() {
         this.properties.addIntegerProperty(THRESHOLD, 0);
     }
 
@@ -43,7 +43,7 @@ public class GraySpreadFilter extends AbstractFilter {
     @Override
     public Image filter(Image input) {
         Image output = ImageFactory.bytePrecision().gray(input.getSize());
-        Image grayImage = new Grayfilter().filter(input);
+        Image grayImage = new Grayfilter_AK_CS().filter(input);
         int width = grayImage.getWidth();
         int height = grayImage.getHeight();
         double min = grayImage.getValue(0, 0, GrayscaleImage.GRAYSCALE);
@@ -64,6 +64,6 @@ public class GraySpreadFilter extends AbstractFilter {
 
         values = applySpread(values, min, max, threshold);
 
-        return Utility.doubleArrayToImage(values, output, width, height);
+        return Utility_AK_CS.doubleArrayToImage(values, output, width, height);
     }
 }

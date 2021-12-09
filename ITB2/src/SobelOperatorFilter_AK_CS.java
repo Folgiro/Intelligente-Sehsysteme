@@ -1,17 +1,16 @@
 import itb2.filter.AbstractFilter;
-import itb2.image.GrayscaleImage;
 import itb2.image.Image;
 import itb2.image.ImageFactory;
 
-public class SobelOperatorFilter extends AbstractFilter {
+public class SobelOperatorFilter_AK_CS extends AbstractFilter {
 
     private static final String TYPE = "type";
 
-    public SobelOperatorFilter() {
+    public SobelOperatorFilter_AK_CS() {
         this.properties.addOptionProperty(TYPE, "Betrag", "Betrag", "Orientierung", "Gewichtete Orientierung");
     }
 
-    public SobelOperatorFilter(String type) {
+    public SobelOperatorFilter_AK_CS(String type) {
         this.properties.addOptionProperty(TYPE, type, "Betrag", "Orientierung", "Gewichtete Orientierung");
     }
 
@@ -31,7 +30,7 @@ public class SobelOperatorFilter extends AbstractFilter {
                 max = Math.max(max, result[col][row]);
             }
         }
-        return new GraySpreadFilter().applySpread(result, min, max);
+        return new GraySpreadFilter_AK_CS().applySpread(result, min, max);
     }
 
     /**
@@ -55,26 +54,26 @@ public class SobelOperatorFilter extends AbstractFilter {
         int height = input.getHeight();
 
         double[][] result;
-        double[][] horizontal = new SobelFilterHorizontal().applyConvolution(input);
-        double[][] vertical = new SobelFilterVertical().applyConvolution(input);
+        double[][] horizontal = new SobelFilterHorizontal_AK_CS().applyConvolution(input);
+        double[][] vertical = new SobelFilterVertical_AK_CS().applyConvolution(input);
 
         String type = properties.getOptionProperty(TYPE);
 
         switch (type) {
             case "Betrag" -> {
                 result = calculateAbsoluteGradient(horizontal, vertical, width, height);
-                Utility.doubleArrayToImage(result, output, width, height);
+                Utility_AK_CS.doubleArrayToImage(result, output, width, height);
             }
             case "Orientierung" -> {
                 output = ImageFactory.getPrecision(input).rgb(input.getSize());
                 result = calculateGradientAngle(horizontal, vertical, width, height);
-                Utility.angleBinning(result, output, width, height, null);
+                Utility_AK_CS.angleBinning(result, output, width, height, null);
             }
             case "Gewichtete Orientierung" -> {
                 double[][] absoluteGradient = calculateAbsoluteGradient(horizontal, vertical, width, height);
                 output = ImageFactory.getPrecision(input).rgb(input.getSize());
                 result = calculateGradientAngle(horizontal, vertical, width, height);
-                Utility.angleBinning(result, output, width, height, absoluteGradient);
+                Utility_AK_CS.angleBinning(result, output, width, height, absoluteGradient);
             }
         }
 

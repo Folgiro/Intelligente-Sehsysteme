@@ -3,11 +3,11 @@ import itb2.image.GrayscaleImage;
 import itb2.image.Image;
 import itb2.image.ImageFactory;
 
-import javax.swing.*;
+public abstract class ConvolutionFilter_AK_CS extends AbstractFilter {
 
-public abstract class ConvolutionFilter extends AbstractFilter {
-
-    //Has to be square
+    /**
+     * first dimension corresponds to column and second to row.
+     */
     abstract double[][] getKernel();
 
     /**
@@ -15,7 +15,7 @@ public abstract class ConvolutionFilter extends AbstractFilter {
      * Turns RGB Images into gray scale
      */
     protected double[][] applyConvolution(Image input) {
-        Image grayImage = new Grayfilter().filter(input);
+        Image grayImage = new Grayfilter_AK_CS().filter(input);
         int width = grayImage.getWidth();
         int height = grayImage.getHeight();
         double[][] result = new double[width][height];
@@ -25,10 +25,11 @@ public abstract class ConvolutionFilter extends AbstractFilter {
 
                 //apply filter for every pixel
                 double[][] kernel = getKernel();
-                int range = kernel.length / 2;
+                int rangeX = kernel.length / 2;
+                int rangeY = kernel[0].length / 2;
                 double sum = 0;
-                for (int offsetCol = -range; offsetCol < range + 1; offsetCol++) {
-                    for (int offsetRow = -range; offsetRow < range + 1; offsetRow++) {
+                for (int offsetCol = -rangeX; offsetCol < rangeX + 1; offsetCol++) {
+                    for (int offsetRow = -rangeY; offsetRow < rangeY + 1; offsetRow++) {
                         //default value for outside of the image
                         double value = 0;
 
@@ -36,7 +37,7 @@ public abstract class ConvolutionFilter extends AbstractFilter {
                         if (!(col - offsetCol < 0 || col - offsetCol >= width || row - offsetRow < 0 || row - offsetRow >= height)) {
                             value = grayImage.getValue(col - offsetCol, row - offsetRow, GrayscaleImage.GRAYSCALE);
                         }
-                        sum += value * kernel[offsetCol + range][offsetRow + range];
+                        sum += value * kernel[offsetCol + rangeX][offsetRow + rangeY];
                     }
                 }
                 result[col][row] = sum;
@@ -52,6 +53,6 @@ public abstract class ConvolutionFilter extends AbstractFilter {
 
         int width = input.getWidth();
         int height = input.getHeight();
-        return Utility.doubleArrayToImage(values, output, width, height);
+        return Utility_AK_CS.doubleArrayToImage(values, output, width, height);
     }
 }

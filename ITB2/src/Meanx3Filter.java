@@ -1,4 +1,4 @@
-public class Meanx3Filter extends ConvolutionFilter {
+public class Meanx3Filter extends ConvolutionFilter_AK_CS {
     @Override
     double[][] getKernel() {
         double[][] arr = new double[3][3];
