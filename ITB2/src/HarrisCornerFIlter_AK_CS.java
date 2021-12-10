@@ -37,6 +37,9 @@ public class HarrisCornerFIlter_AK_CS extends AbstractFilter {
      * @return 2x2 harris matrix
      */
     private double[][] calculateHarrisMatrix(double[][] weightMatrix, double[][] derivativeY, double[][] derivativeX, int col, int row, int size) {
+        if(col == 69 && row == 36){
+            int x = 1;
+        }
         double[][] result = {{0, 0}, {0, 0}};
         int range = size / 2;
         for (int offsetCol = -range; offsetCol < range + 1; offsetCol++) {
@@ -58,7 +61,7 @@ public class HarrisCornerFIlter_AK_CS extends AbstractFilter {
      * @param arr harris matrix
      */
     private double calculateR(double[][] arr, double kappa) {
-        return (arr[0][0] * arr[1][1] - arr[0][0] * arr[1][0] * arr[0][1]) - kappa * Math.pow(arr[0][0] + arr[1][1], 2);
+        return (arr[0][0] * arr[1][1] - arr[1][0] * arr[0][1]) - kappa * Math.pow(arr[0][0] + arr[1][1], 2);
     }
 
     @Override
@@ -81,7 +84,7 @@ public class HarrisCornerFIlter_AK_CS extends AbstractFilter {
         for (int col = 0; col < width; col++) {
             for (int row = 0; row < height; row++) {
                 double[][] harrisMatrix = calculateHarrisMatrix(weightMatrix, derivativeY, derivativeX, col, row, size);
-                if (Math.abs(calculateR(harrisMatrix, kappa)) > threshold) {
+                if (calculateR(harrisMatrix, kappa) > threshold) {
                     int range = 1;
                     for (int offsetCol = -range; offsetCol < range + 1; offsetCol++) {
                         for (int offsetRow = -range; offsetRow < range + 1; offsetRow++) {
