@@ -53,6 +53,18 @@ public abstract class ConvolutionFilter_AK_CS extends AbstractFilter {
 
         int width = input.getWidth();
         int height = input.getHeight();
-        return Utility_AK_CS.doubleArrayToImage(values, output, width, height);
+        double min = values[0][0];
+        double max = min;
+
+        //get min and max values
+        for (int col = 0; col < width; col++) {
+            for (int row = 0; row < height; row++) {
+                values[col][row] = values[col][row];
+                    min = Math.min(min, values[col][row]);
+                    max = Math.max(max, values[col][row]);
+            }
+        }
+
+        return Utility_AK_CS.doubleArrayToImage(new GraySpreadFilter_AK_CS().applySpread(values, min, max), output, width, height);
     }
 }
